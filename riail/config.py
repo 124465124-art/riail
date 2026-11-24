@@ -12,7 +12,7 @@ from dotenv import load_dotenv
 
 @dataclass(frozen=True)
 class Config:
-    answerer: str = "llm"             # llm | mock | mock_fail
+    answerer: str = "mock"            # mock (no key needed) | llm | mock_fail
     llm_api_key: str = ""
     llm_model: str = "openai/gpt-oss-20b"
     llm_base_url: str = "https://api.groq.com/openai/v1"
