@@ -1,0 +1,18 @@
+# Secrets: the API key lives here and must never be committed
+.env
+
+# Local database and feedback log (rebuilt by the ingestion script)
+instance/
+
+# Python
+__pycache__/
+*.pyc
+.venv/
+venv/
+.pytest_cache/
+
+# PyCharm project settings
+.idea/
+
+# Claude Code personal settings
+.claude/settings.local.json
