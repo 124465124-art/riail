@@ -1,0 +1,197 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Riail: hurling rules explained</title>
+<style>
+  :root { --green: #1f6b3a; --ink: #1d1d1b; --muted: #5f6368; --line: #d9d9d4; --bg: #f7f7f4; --warn: #8a5a00; --warn-bg: #fff4dc; }
+  * { box-sizing: border-box; }
+  body { margin: 0; font-family: system-ui, -apple-system, "Segoe UI", sans-serif; color: var(--ink); background: var(--bg); }
+  main { max-width: 680px; margin: 0 auto; padding: 24px 16px 48px; }
+  h1 { margin: 0; font-size: 28px; color: var(--green); }
+  .tagline { margin: 4px 0 20px; color: var(--muted); }
+  .card { background: #fff; border: 1px solid var(--line); border-radius: 10px; padding: 16px; margin-bottom: 16px; }
+  label { display: block; font-weight: 600; margin-bottom: 6px; }
+  select, textarea { width: 100%; font: inherit; padding: 10px; border: 1px solid var(--line); border-radius: 8px; }
+  textarea { min-height: 96px; resize: vertical; }
+  .row { display: flex; justify-content: space-between; align-items: center; margin-top: 8px; gap: 8px; }
+  .hint { font-size: 13px; color: var(--muted); }
+  button { font: inherit; border-radius: 8px; border: 1px solid var(--green); padding: 8px 16px; cursor: pointer; }
+  button.primary { background: var(--green); color: #fff; }
+  button.secondary { background: #fff; color: var(--green); }
+  button:disabled { opacity: .5; cursor: default; }
+  .samples { display: flex; flex-wrap: wrap; gap: 8px; margin-top: 12px; }
+  .samples button { border-color: var(--line); color: var(--ink); background: #fff; font-size: 14px; padding: 6px 10px; text-align: left; }
+  .tag { display: inline-block; font-size: 13px; font-weight: 600; padding: 3px 8px; border-radius: 999px; background: #e3f1e7; color: var(--green); }
+  .tag.trial { background: #fbe9d8; color: #8a3b00; }
+  .notice { background: var(--warn-bg); color: var(--warn); border-radius: 8px; padding: 10px 12px; margin: 12px 0; font-size: 14px; }
+  .disclaimer { font-size: 13px; color: var(--muted); border-top: 1px solid var(--line); margin-top: 12px; padding-top: 10px; }
+  details { border: 1px solid var(--line); border-radius: 8px; padding: 8px 12px; margin-top: 8px; }
+  summary { cursor: pointer; font-weight: 600; }
+  details p { margin: 8px 0 0; }
+  .source { font-size: 12px; color: var(--muted); }
+  .error { color: #b3261e; margin-top: 8px; }
+  [hidden] { display: none !important; }
+</style>
+</head>
+<body>
+<main>
+  <h1>Riail</h1>
+  <p class="tagline">Describe a match situation. Get the hurling rule that applies, explained.</p>
+
+  <!-- Wireframe 1: Ask -->
+  <section class="card" aria-labelledby="ask-heading">
+    <h2 id="ask-heading" hidden>Ask</h2>
+    <label for="rule-set">Rule set</label>
+    <select id="rule-set">
+      <option value="current">Club game: current rules</option>
+      <option value="trial_2026">College game: 2026 trial rules</option>
+    </select>
+
+    <label for="question" style="margin-top:12px">What happened?</label>
+    <textarea id="question" maxlength="500"
+      placeholder="e.g. A player caught the sliotar, handpassed it, got it back and handpassed again. Is that a free?"></textarea>
+    <div class="row">
+      <span class="hint">Please don't include players' names.</span>
+      <span class="hint" id="count">0 / 500</span>
+    </div>
+    <div class="row">
+      <span></span>
+      <button class="primary" id="ask-btn">Ask</button>
+    </div>
+    <div class="error" id="ask-error" role="alert"></div>
+
+    <div class="samples" aria-label="Sample questions">
+      <button data-q="He took about six steps with the ball in his hand before passing. Is that a free?">Too many steps?</button>
+      <button data-q="A player threw the ball to a teammate instead of a proper handpass. What's the decision?">He threw it</button>
+      <button data-q="A defender hit the ball wide over his own endline. Where is the free taken?">Ball wide off a defender</button>
+    </div>
+  </section>
+
+  <!-- Wireframes 2 and 3: Answer / Not covered (plus the AI-failure fallback) -->
+  <section class="card" id="result" hidden aria-live="polite">
+    <span class="tag" id="result-tag"></span>
+
+    <div id="ok-view" hidden>
+      <p id="answer-text"></p>
+    </div>
+
+    <div id="fallback-view" hidden>
+      <div class="notice">The AI explanation isn't available right now. Here are the rules that match your question.</div>
+    </div>
+
+    <div id="not-covered-view" hidden>
+      <p><strong>No relevant rule found.</strong> Riail only answers from the hurling rulebook, so it won't guess.</p>
+      <ul class="hint">
+        <li>Describe what happened on the pitch, e.g. "he carried it for six steps".</li>
+        <li>Check you picked the right rule set.</li>
+        <li>Riail covers hurling only, not football or camogie.</li>
+      </ul>
+      <div class="row">
+        <button class="secondary" id="edit-btn">Edit question</button>
+        <a href="https://www.gaa.ie/the-gaa/rules-regulations" target="_blank" rel="noopener">Open the Official Guide</a>
+      </div>
+    </div>
+
+    <div id="rules"></div>
+
+    <div class="row" id="feedback-row" hidden>
+      <span class="hint" id="feedback-msg">Was this helpful?</span>
+      <span>
+        <button class="secondary" data-rating="up" aria-label="Helpful">👍</button>
+        <button class="secondary" data-rating="down" aria-label="Not helpful">👎</button>
+      </span>
+    </div>
+
+    <p class="disclaimer">Guidance only, not an official ruling. Rule text is a summary for this prototype; check the Official Guide.</p>
+  </section>
+</main>
+
+<script>
+  const $ = (id) => document.getElementById(id);
+  let currentAnswerId = null;
+
+  $("question").addEventListener("input", () => {
+    $("count").textContent = `${$("question").value.length} / 500`;
+  });
+
+  document.querySelectorAll(".samples button").forEach((b) =>
+    b.addEventListener("click", () => {
+      $("question").value = b.dataset.q;
+      $("question").dispatchEvent(new Event("input"));
+      ask();
+    })
+  );
+
+  $("ask-btn").addEventListener("click", ask);
+  $("edit-btn").addEventListener("click", () => { $("question").focus(); });
+
+  async function ask() {
+    $("ask-error").textContent = "";
+    $("ask-btn").disabled = true;
+    $("ask-btn").textContent = "Checking the rules…";
+    try {
+      const res = await fetch("/ask", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({ question: $("question").value, rule_set: $("rule-set").value }),
+      });
+      const data = await res.json();
+      if (!res.ok) { $("ask-error").textContent = data.error || "Something went wrong."; return; }
+      show(data);
+    } catch (e) {
+      $("ask-error").textContent = "Could not reach Riail. Check your connection and try again.";
+    } finally {
+      $("ask-btn").disabled = false;
+      $("ask-btn").textContent = "Ask";
+    }
+  }
+
+  function show(data) {
+    currentAnswerId = data.answer_id;
+    $("result").hidden = false;
+    const tag = $("result-tag");
+    tag.textContent = data.rule_set_label;
+    tag.className = "tag" + (data.rule_set === "trial_2026" ? " trial" : "");
+
+    $("ok-view").hidden = data.status !== "ok";
+    $("fallback-view").hidden = data.status !== "fallback";
+    $("not-covered-view").hidden = data.status !== "not_covered";
+    $("feedback-row").hidden = data.status === "not_covered";
+    $("feedback-msg").textContent = "Was this helpful?";
+    // textContent (not innerHTML) so nothing in the AI's reply can run as code in the page.
+    $("answer-text").textContent = data.answer;
+
+    const rules = $("rules");
+    rules.replaceChildren();
+    data.rules.forEach((r) => {
+      const d = document.createElement("details");
+      d.open = data.status === "fallback";  // in a fallback the rule text is the whole answer
+      const s = document.createElement("summary");
+      s.textContent = `Rule ${r.rule_number}${r.title ? ": " + r.title : ""}`;
+      const p = document.createElement("p");
+      p.textContent = r.text;
+      const src = document.createElement("p");
+      src.className = "source";
+      src.textContent = `${r.source} · in force from ${r.effective_from}`;
+      d.append(s, p, src);
+      rules.append(d);
+    });
+    $("result").scrollIntoView({ behavior: "smooth", block: "start" });
+  }
+
+  document.querySelectorAll("[data-rating]").forEach((b) =>
+    b.addEventListener("click", async () => {
+      if (!currentAnswerId) return;
+      const res = await fetch("/feedback", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({ answer_id: currentAnswerId, rating: b.dataset.rating }),
+      });
+      $("feedback-msg").textContent = res.ok ? "Thanks for the feedback." : "Feedback could not be saved.";
+    })
+  );
+</script>
+</body>
+</html>
