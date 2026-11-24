@@ -1,0 +1,17 @@
+{
+  "rule_set": "trial_2026",
+  "base": "current",
+  "source": "Hurling Expert Advisory Group trial rules, Higher Education Division 1 league 2026 (from news reports; full official text not found)",
+  "effective_from": "2026-10-01",
+  "note": "The trial rule set is the current rules with these amendments laid on top. A trial rule with the same rule number as a current rule replaces it; new rule numbers starting with T are added. Paraphrased from news reports, so check against the official trial rules before relying on them.",
+  "rules": [
+    {"rule_number": "1.7", "title": "Carrying and steps (trial: six steps)", "text": "TRIAL RULE: a player may carry the ball in the hand for no more than six steps, or hold it for no longer than it takes to take six steps. This replaces the four-step limit in the current rules."},
+    {"rule_number": "4.1", "title": "Overcarrying (trial: more than six steps)", "text": "TRIAL RULE: technical foul to carry the ball in the hand for more than six steps, or hold it for longer than six steps would take. Penalty: free puck to the other team."},
+    {"rule_number": "4.2", "title": "Illegal handpass (trial: clear striking action)", "text": "TRIAL RULE: every handpass needs a clear and definite striking action, with visible separation between the ball and the hand that strikes it. A handpass without this is a throw. Penalty: free puck to the other team."},
+    {"rule_number": "T1", "title": "Consecutive handpasses banned", "text": "TRIAL RULE: a team may not make two handpasses in a row. A player who receives the ball from a teammate's handpass may not pass it on with another handpass; it must be played with the hurley first. Penalty: free puck to the other team."},
+    {"rule_number": "T2", "title": "Sideline puck over the bar worth two points", "text": "TRIAL RULE: a sideline puck struck directly over the crossbar is worth two points instead of one."},
+    {"rule_number": "2.7", "title": "65m free (trial: from own half)", "text": "TRIAL RULE: when the ball goes wide off a defender, the attacking team's free is taken from their own 65m line, in their own half of the field, instead of the opponents' 65m line. This makes the free much longer."},
+    {"rule_number": "2.6", "title": "Puck-out (trial: must pass the 45)", "text": "TRIAL RULE: the puck-out must travel past the defending team's 45m line before another player plays it. Three players from each team must stay between the defending team's 20m and 45m lines until the ball is struck (one report says the 25m line)."},
+    {"rule_number": "1.8", "title": "Tackling (trial: no arm tackle)", "text": "TRIAL RULE: using the arms to hold off or wrap up an opponent is not part of a fair tackle. A player may tackle to win the ball but may not use the arms on the opponent's body."}
+  ]
+}
